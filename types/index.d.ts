@@ -5,7 +5,7 @@ export namespace HdWallet {
   export type XPub = Buffer;
   
   // Generate an eXtended private key from the given entropy and the given password.
-  export function fromEnhancedEntropy(entropy: Buffer, password: string): XPrv;
+  export function fromEnhancedEntropy(entropy: Buffer, password: Buffer): XPrv;
   
   // Create a private key from the given seed.
   export function fromSeed(seed: Buffer): XPrv;
@@ -77,11 +77,11 @@ export namespace RandomAddressChecker {
 export namespace PasswordProtect {
   // Encrypt the given data with the password, salt and nonce.
   export function encryptWithPassword(
-    password: string, salt: Buffer, nonce: Buffer, data: Buffer
+    password: Buffer, salt: Buffer, nonce: Buffer, data: Buffer
   ): Buffer;
   
   // Decrypt the given data with the password.
-  export function decryptWithPassword(password: string, data: Buffer): Buffer;
+  export function decryptWithPassword(password: Buffer, data: Buffer): Buffer;
 }
 
 export { rncardano };
