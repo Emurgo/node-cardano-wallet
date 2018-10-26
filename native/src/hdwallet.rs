@@ -4,21 +4,21 @@ use buffer::*;
 use wallet_wasm;
 use cardano::hdwallet;
 
-// Params: entropy: Buffer, password: String
+// Params: entropy: Buffer, password: Buffer
 pub fn from_enhanced_entropy(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   let entropy = cx.argument::<JsBuffer>(0)?;
-  let pwd_str = cx.argument::<JsString>(1)?.value();
+  let pwd = cx.argument::<JsBuffer>(1)?;
 
   let mut output_buf = cx.buffer(hdwallet::XPRV_SIZE as u32)?;
   {
     let guard = cx.lock();
     let entropy_buf: BufferPtr = entropy.borrow(&guard).into();
+    let pwd_buf: BufferPtr = pwd.borrow(&guard).into();
     let output: MutBufferPtr = output_buf.borrow_mut(&guard).into();
 
     handle_exception(|| {
-      let pwd: &[u8] = pwd_str.as_bytes();
       let res = wallet_wasm::wallet_from_enhanced_entropy(
-        entropy_buf.ptr, entropy_buf.size, pwd.as_ptr(), pwd.len(), output.ptr
+        entropy_buf.ptr, entropy_buf.size, pwd_buf.ptr, pwd_buf.size, output.ptr
       );
 
       if res != 0 { panic!("Rust method error. Check entropy size.") }

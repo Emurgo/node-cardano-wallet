@@ -7,9 +7,9 @@ pub const SALT_SIZE  : usize = 32;
 pub const NONCE_SIZE : usize = 12;
 pub const TAG_SIZE   : usize = 16;
 
-// Params: password: String, salt: Buffer, nonce: Buffer, data: Buffer
+// Params: password: Buffer, salt: Buffer, nonce: Buffer, data: Buffer
 pub fn encrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
-  let pwd = cx.argument::<JsString>(0)?.value();
+  let pwd = cx.argument::<JsBuffer>(0)?;
   let salt = cx.argument::<JsBuffer>(1)?;
   let nonce = cx.argument::<JsBuffer>(2)?;
   let data = cx.argument::<JsBuffer>(3)?;
@@ -35,16 +35,16 @@ pub fn encrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   .and_then(|mut js_buffer| {
     {
       let guard = cx.lock();
+      let bpwd: BufferPtr = pwd.borrow(&guard).into();
       let bsalt: BufferPtr = salt.borrow(&guard).into();
       let bnonce: BufferPtr = nonce.borrow(&guard).into();
       let bdata: BufferPtr = data.borrow(&guard).into();
-      let pwd_ptr: &[u8] = pwd.as_bytes();
 
       let output: MutBufferPtr = js_buffer.borrow_mut(&guard).into();
 
       handle_exception(|| {
         wallet_wasm::encrypt_with_password(
-          pwd_ptr.as_ptr(), pwd_ptr.len(), bsalt.ptr, bnonce.ptr, bdata.ptr, bdata.size,
+          bpwd.ptr, bpwd.size, bsalt.ptr, bnonce.ptr, bdata.ptr, bdata.size,
           output.ptr
         ) as usize
       }).and_then(|rsz| {
@@ -57,9 +57,9 @@ pub fn encrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   })
 }
 
-// Params: password: String, data: ArrayBuffer
+// Params: password: Buffer, data: ArrayBuffer
 pub fn decrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
-  let pwd = cx.argument::<JsString>(0)?.value();
+  let pwd = cx.argument::<JsBuffer>(0)?;
   let data = cx.argument::<JsBuffer>(1)?;
   {
     let guard = cx.lock();
@@ -76,14 +76,14 @@ pub fn decrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   .and_then(|mut js_buffer| {
     {
       let guard = cx.lock();
+      let bpwd: BufferPtr = pwd.borrow(&guard).into();
       let bdata: BufferPtr = data.borrow(&guard).into();
-      let pwd_ptr: &[u8] = pwd.as_bytes();
 
       let output: MutBufferPtr = js_buffer.borrow_mut(&guard).into();
 
       handle_exception(|| {
         wallet_wasm::decrypt_with_password(
-          pwd_ptr.as_ptr(), pwd_ptr.len(), bdata.ptr, bdata.size,
+          bpwd.ptr, bpwd.size, bdata.ptr, bdata.size,
           output.ptr
         ) as usize
       }).and_then(|rsz| {
