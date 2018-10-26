@@ -65,7 +65,7 @@ pub fn check_addresses(mut cx: FunctionContext) -> JsResult<JsString> {
   handle_exception(|| {
     let params: &[u8] = params_str.as_bytes();
     
-    let rsz = wallet_wasm::random_address_checker_from_mnemonics(params.as_ptr(), params.len(), buf.ptr);
+    let rsz = wallet_wasm::random_address_check(params.as_ptr(), params.len(), buf.ptr);
 
     if rsz <= 0 { panic!("Response {} <= 0", rsz); }
     if (rsz as usize) > output_size { panic!("Response {} >= {}", rsz, output_size) }
