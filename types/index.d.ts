@@ -44,8 +44,8 @@ export namespace Wallet {
     account: rncardano.Wallet.AccountObj, type: rncardano.Wallet.AddressType, indices: Array<number>
   ): Array<rncardano.Wallet.Address>;
 
-  // Check if the given Buffer is a valid Cardano Extended Address.
-  export function checkAddress(address: Buffer): boolean;
+  // Check if the given base58 string is a valid Cardano Extended Address.
+  export function checkAddress(address: rncardano.Wallet.Address): boolean;
   
   // Generate a ready to send, signed, transaction.
   export function spend(

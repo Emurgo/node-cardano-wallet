@@ -12,10 +12,11 @@
     "Wallet"
   ],
   "dependencies": {
+    "bs58": "^4.0.1",
     "neon-cli": "^0.2.0"
   },
   "devDependencies": {
-    "@types/node":"^10.12.0"
+    "@types/node": "^10.12.0"
   },
   "scripts": {
     "install": "neon build -r",
