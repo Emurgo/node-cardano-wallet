@@ -12,7 +12,6 @@
     "Wallet"
   ],
   "dependencies": {
-    "bs58": "^4.0.1",
     "neon-cli": "^0.2.0"
   },
   "devDependencies": {

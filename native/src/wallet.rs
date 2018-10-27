@@ -3,6 +3,7 @@ use exception::*;
 use buffer::*;
 use wallet_wasm;
 use std::str;
+use cardano::util::{base58, hex};
 use super::MAX_OUTPUT_SIZE;
 
 // Params: xprv: Buffer
@@ -111,7 +112,7 @@ pub fn generate_addresses(mut cx: FunctionContext) -> JsResult<JsString> {
   }).or_throw(&mut cx)
 }
 
-// Params: address: "String"
+// Params: address: String
 pub fn check_address(mut cx: FunctionContext) -> JsResult<JsString> {
   let address = cx.argument::<JsString>(0)?.value();
   
@@ -119,7 +120,9 @@ pub fn check_address(mut cx: FunctionContext) -> JsResult<JsString> {
   let output = MutBufferPtr::from(&mut output_data);
   
   handle_exception(|| {
-    let address_ptr: &[u8] = address.as_bytes();
+    let decoded = base58::decode(&address).expect("Couldn't decode base58");
+    let fixed_address = format!("\"{}\"", hex::encode(&decoded));
+    let address_ptr: &[u8] = fixed_address.as_bytes();
     
     let rsz = wallet_wasm::xwallet_checkaddress(
       address_ptr.as_ptr(), address_ptr.len(), output.ptr
