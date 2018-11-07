@@ -19,15 +19,16 @@ pub fn encrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
     let bsalt = salt.borrow(&guard);
     let bnonce = nonce.borrow(&guard);
     let bdata = data.borrow(&guard);
+    let bpwd = data.borrow(&guard);
 
-    if bsalt.len() == SALT_SIZE {
-      if bnonce.len() == NONCE_SIZE {
-        Ok(bdata.len() + TAG_SIZE + NONCE_SIZE + SALT_SIZE)
-      } else {
-        Err(format!("Wrong nonce len {} should be {}", bnonce.len(), NONCE_SIZE))
-      }
-    } else {
+    if bpwd.len() <= 0 {
+      Err(String::from("Password can't be empty"))
+    } else if bsalt.len() != SALT_SIZE {
       Err(format!("Wrong salt len {} should be {}", bsalt.len(), SALT_SIZE))
+    } else if bnonce.len() != NONCE_SIZE {
+      Err(format!("Wrong nonce len {} should be {}", bnonce.len(), NONCE_SIZE))
+    } else {
+      Ok(bdata.len() + TAG_SIZE + NONCE_SIZE + SALT_SIZE)
     }
   }
   .or_throw(&mut cx)
@@ -64,9 +65,12 @@ pub fn decrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   {
     let guard = cx.lock();
     let bdata = data.borrow(&guard);
+    let bpwd = data.borrow(&guard);
 
     if bdata.len() <= TAG_SIZE + NONCE_SIZE + SALT_SIZE { 
       Err(format!("Wrong data len {} should be at least {}", bdata.len(), TAG_SIZE + NONCE_SIZE + SALT_SIZE + 1))
+    } else if bpwd.len() <= 0 {
+      Err(String::from("Password can't be empty"))
     } else {
       Ok(bdata.len() - TAG_SIZE - NONCE_SIZE - SALT_SIZE)
     }
@@ -85,10 +89,13 @@ pub fn decrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
         wallet_wasm::decrypt_with_password(
           bpwd.ptr, bpwd.size, bdata.ptr, bdata.size,
           output.ptr
-        ) as usize
+        )
       }).and_then(|rsz| {
-        if rsz != output.size {
-          return Err(format!("Size mismatch {} should be {}", rsz, output.size));
+        if rsz <= 0 {
+          return Err(String::from("Decryption failed. Check your password."));
+        }
+        if rsz as usize != output.size {
+          return Err(format!("Decrypted data size mismatch {} should be {}", rsz, output.size));
         }
         Ok(js_buffer)
       })
