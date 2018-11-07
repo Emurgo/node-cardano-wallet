@@ -6,7 +6,7 @@ declare namespace RNCardano {
     export type XPub = HexString;
     
     // Generate an eXtended private key from the given entropy and the given password.
-    export function fromEnhancedEntropy(entropy: HexString, password: string): Promise<XPrv>;
+    export function fromEnhancedEntropy(entropy: HexString, password: HexString): Promise<XPrv>;
     
     // Create a private key from the given seed.
     export function fromSeed(seed: HexString): Promise<XPrv>;
