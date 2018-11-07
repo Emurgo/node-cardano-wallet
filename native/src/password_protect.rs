@@ -19,7 +19,7 @@ pub fn encrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
     let bsalt = salt.borrow(&guard);
     let bnonce = nonce.borrow(&guard);
     let bdata = data.borrow(&guard);
-    let bpwd = data.borrow(&guard);
+    let bpwd = pwd.borrow(&guard);
 
     if bpwd.len() <= 0 {
       Err(String::from("Password can't be empty"))
@@ -65,7 +65,7 @@ pub fn decrypt_with_password(mut cx: FunctionContext) -> JsResult<JsBuffer> {
   {
     let guard = cx.lock();
     let bdata = data.borrow(&guard);
-    let bpwd = data.borrow(&guard);
+    let bpwd = pwd.borrow(&guard);
 
     if bdata.len() <= TAG_SIZE + NONCE_SIZE + SALT_SIZE { 
       Err(format!("Wrong data len {} should be at least {}", bdata.len(), TAG_SIZE + NONCE_SIZE + SALT_SIZE + 1))
