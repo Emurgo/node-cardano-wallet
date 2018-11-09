@@ -146,7 +146,7 @@ pub fn spend(mut cx: FunctionContext) -> JsResult<JsString> {
   let ilen = cx.argument::<JsNumber>(1)?.value() as u32 as usize;
   let olen = cx.argument::<JsNumber>(2)?.value() as u32 as usize;
   
-  let output_size = (ilen + olen + 1) * 4096;
+  let output_size = (ilen + olen + 1) * 65536 + 1024;
   let mut output_data: Vec<u8> = Vec::new();
   output_data.resize(output_size, 0);
 
@@ -176,7 +176,7 @@ pub fn move_func(mut cx: FunctionContext) -> JsResult<JsString> {
   let params = cx.argument::<JsString>(0)?.value();
   let ilen = cx.argument::<JsNumber>(1)?.value() as u32 as usize;
   
-  let output_size = (ilen + 1) * 4096;
+  let output_size = (ilen + 1) * 65536 + 1024;
   let mut output_data: Vec<u8> = Vec::new();
   output_data.resize(output_size, 0);
 

@@ -3,6 +3,7 @@ use exception::*;
 use buffer::*;
 use wallet_wasm;
 use std::str;
+use std::cmp;
 use super::MAX_OUTPUT_SIZE;
 
 // Params: xprv: "HexString"
@@ -54,9 +55,8 @@ pub fn new_checker_from_mnemonics(mut cx: FunctionContext) -> JsResult<JsString>
 // Params: params: JSONString, alen: Number
 pub fn check_addresses(mut cx: FunctionContext) -> JsResult<JsString> {
   let params_str = cx.argument::<JsString>(0)?.value();
-  let alen = cx.argument::<JsNumber>(1)?.value() as u32 as usize;
   
-  let output_size = (alen as usize) * 4096;
+  let output_size = cmp::max(params_str.len(), MAX_OUTPUT_SIZE);
   let mut output: Vec<u8> = Vec::new();
   output.resize(output_size, 0);
 
