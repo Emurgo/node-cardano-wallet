@@ -14,8 +14,8 @@ crate-type = ["dylib"]
 neon-build = "0.2.0"
 
 [dependencies]
-wallet-wasm = { git = "https://github.com/ypopovych/js-cardano-wasm.git" }
-cardano = { git = "https://github.com/ypopovych/js-cardano-wasm.git" }
+wallet-wasm = { git = "https://github.com/rooooooooob/js-cardano-wasm.git", branch = "testnet-address-gen" }
+cardano = { git = "https://github.com/rooooooooob/js-cardano-wasm.git", branch = "testnet-address-gen" }
 neon = "0.2.0"
 
 [profile.release]
