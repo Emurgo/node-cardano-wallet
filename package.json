@@ -1,6 +1,6 @@
 {
   "name": "node-cardano-wallet",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Node.js bindings to the rust-cardano",
   "main": "lib/index.js",
   "author": "Crossroad Labs <info@crossroad.io>",
