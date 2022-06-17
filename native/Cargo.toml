@@ -16,7 +16,7 @@ neon-build = "0.2.0"
 [dependencies]
 wallet-wasm = { git = "https://github.com/input-output-hk/js-cardano-wasm.git" }
 cardano = { git = "https://github.com/input-output-hk/js-cardano-wasm.git" }
-neon = "0.2.0"
+neon = "0.10.1"
 
 [profile.release]
 debug = false
